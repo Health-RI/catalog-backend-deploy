@@ -5,6 +5,7 @@ on:
     tags:
       - "v*"
 
+# dit is wat commentaar 
 env:
   IMAGE_NAME: ghcr.io/genomicdatainfrastructure/gdi-userportal-ckan-docker
 
