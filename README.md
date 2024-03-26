@@ -32,7 +32,7 @@ This is a OSS project template. It suggests an initial setup for a successful op
 
 ## CI/CD
 
-There are three workflows available, `test.yml`, `main.yml`, and `release.yml`. 
+There is one workflow available release.yml`. 
 
 In `test.yml` should go all kinds of tests, like: unit/integration tests, linters, prettiers, sonar, etc. This workflow should be fast and happen on every push.
 
