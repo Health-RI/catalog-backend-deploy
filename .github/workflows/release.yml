@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - "v*"
+  release:
+    types: [published]
 
 env:
   IMAGE_NAME: ghcr.io/genomicdatainfrastructure/gdi-userportal-ckan-docker
