@@ -15,8 +15,10 @@ env:
 jobs:
   deploy-to-acc:
     runs-on: ubuntu-latest
-    environment:
-      name: acc
+    env:  
+      AZURE_CKAN_APP_NAME: healthri-ckan-solr-uac
+      AZURE_DISCOVERY_APP_NAME: dataset-discovery-service-acc
+      AZURE_SOLR_APP_NAME: healthri-ckan-solr-uac
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -26,36 +28,36 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update image version CKAN 
+      - name: Update image version CKAN
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
+          app-name: ${{ env.AZURE_CKAN_APP_NAME }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
 
-      - name: Update image version Discovery 
+      - name: Update image version Discovery
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
-          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
-      
+          app-name: ${{ env.AZURE_DISCOVERY_APP_NAME }}
+          images: "${{ env.DISCOVERY_IMAGE }}:${{ vars.VERSION_DISCOVERY }}"
+
       - name: Update SOLR docker-compose file with dynamic versions
         run: |
-            sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
-            sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
+          sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
+          sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
 
       - name: Deploy SOLR with Docker Compose
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
-          configuration-file: docker-compose.yml 
-  
-      
+          app-name: ${{ env.AZURE_SOLR_APP_NAME }}
+          configuration-file: docker-compose.yml
 
-  deploy-to-production:
+  deploy-to-prod:
     runs-on: ubuntu-latest
-    environment:
-      name: prod
     needs: deploy-to-acc
+    env:  
+      AZURE_CKAN_APP_NAME: healthri-ckan
+      AZURE_DISCOVERY_APP_NAME: dataset-discovery-service
+      AZURE_SOLR_APP_NAME: healthri-ckan-solr
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -63,27 +65,27 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}  
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update image version CKAN 
+      - name: Update image version CKAN
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
+          app-name: ${{ env.AZURE_CKAN_APP_NAME }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
 
-      - name: Update image version Discovery 
+      - name: Update image version Discovery
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
-          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
-      
+          app-name: ${{ env.AZURE_DISCOVERY_APP_NAME }}
+          images: "${{ env.DISCOVERY_IMAGE }}:${{ vars.VERSION_DISCOVERY }}"
+
       - name: Update SOLR docker-compose file with dynamic versions
         run: |
-            sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
-            sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
+          sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
+          sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
 
       - name: Deploy SOLR with Docker Compose
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
-          configuration-file: docker-compose.yml 
+          app-name: ${{ env.AZURE_SOLR_APP_NAME }}
+          configuration-file: docker-compose.yml
