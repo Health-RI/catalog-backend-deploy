@@ -15,8 +15,9 @@ env:
 jobs:
   deploy-to-acc:
     runs-on: ubuntu-latest
+    environment: acc
     env:  
-      AZURE_CKAN_APP_NAME: healthri-ckan-solr-uac
+      AZURE_CKAN_APP_NAME: healthri-ckan-uac
       AZURE_DISCOVERY_APP_NAME: dataset-discovery-service-acc
       AZURE_SOLR_APP_NAME: healthri-ckan-solr-uac
     steps:
@@ -54,6 +55,7 @@ jobs:
   deploy-to-prod:
     runs-on: ubuntu-latest
     needs: deploy-to-acc
+    environment: prod
     env:  
       AZURE_CKAN_APP_NAME: healthri-ckan
       AZURE_DISCOVERY_APP_NAME: dataset-discovery-service
