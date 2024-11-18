@@ -21,18 +21,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Update image version CKAN 
-        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_CKAN_PUBLISH_PROFILE }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
 
       - name: Update image version Discovery 
-        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_DISCOVERY_PUBLISH_PROFILE }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
       
       - name: Update SOLR docker-compose file with dynamic versions
@@ -57,18 +60,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}  
+
       - name: Update image version CKAN 
-        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_CKAN_PUBLISH_PROFILE }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
 
       - name: Update image version Discovery 
-        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_DISCOVERY_PUBLISH_PROFILE }}
           images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
       
       - name: Update SOLR docker-compose file with dynamic versions
@@ -80,5 +86,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_SOLR_PUBLISH_PROFILE }}
           configuration-file: docker-compose.yml 
