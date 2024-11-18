@@ -44,7 +44,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
-          publish-profile: ${{ secrets.AZURE_SOLR_PUBLISH_PROFILE }}
           configuration-file: docker-compose.yml 
   
       
