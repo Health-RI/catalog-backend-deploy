@@ -8,7 +8,9 @@ on:
     types: [published]
 
 env:
-  IMAGE_NAME: ghcr.io/genomicdatainfrastructure/gdi-userportal-ckan-docker
+  CKAN_NAME: ghcr.io/genomicdatainfrastructure/gdi-userportal-ckan-docker
+  DISCOVERY_IMAGE: genomicdatainfrastructure/gdi-userportal-dataset-discovery-service
+  SOLR_IMAGE: ghcr.io/genomicdatainfrastructure/gdi-userportal-solr
 
 jobs:
   deploy-to-acc:
@@ -18,15 +20,34 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Get the version tag
-        id: get_version
-        run: echo "VERSION_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-      - name: Deploy to Azure Web App
+
+      - name: Update image version CKAN 
         uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
         with:
-          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: "${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}"
+          app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_CKAN_PUBLISH_PROFILE }}
+          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
+
+      - name: Update image version Discovery 
+        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        with:
+          app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_DISCOVERY_PUBLISH_PROFILE }}
+          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
+      
+      - name: Update SOLR docker-compose file with dynamic versions
+        run: |
+            sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
+            sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
+
+      - name: Deploy SOLR with Docker Compose
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_SOLR_PUBLISH_PROFILE }}
+          configuration-file: docker-compose.yml 
+  
+      
 
   deploy-to-production:
     runs-on: ubuntu-latest
@@ -36,12 +57,29 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Get the version tag
-        id: get_version
-        run: echo "VERSION_TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-      - name: Deploy to Azure Web App
+
+      - name: Update image version CKAN 
         uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
         with:
-          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: "${{ env.IMAGE_NAME }}:${{ env.VERSION_TAG }}"
+          app-name: ${{ vars.AZURE_CKAN_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_CKAN_PUBLISH_PROFILE }}
+          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_CKAN }}"
+
+      - name: Update image version Discovery 
+        uses: azure/webapps-deploy@85270a1854658d167ab239bce43949edb336fa7c
+        with:
+          app-name: ${{ vars.AZURE_DISCOVERY_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_DISCOVERY_PUBLISH_PROFILE }}
+          images: "${{ env.CKAN_NAME }}:${{ vars.VERSION_DISCOVERY }}"
+      
+      - name: Update SOLR docker-compose file with dynamic versions
+        run: |
+            sed -i "s|{VERSION_SOLR}|${{ vars.VERSION_SOLR }}|g" docker-compose.yml
+            sed -i "s|{VERSION_SOLR_WITH_LOWER_DASHES}|${{ vars.VERSION_SOLR_WITH_LOWER_DASHES }}|g" docker-compose.yml
+
+      - name: Deploy SOLR with Docker Compose
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ vars.AZURE_SOLR_APP_NAME }}
+          publish-profile: ${{ secrets.AZURE_SOLR_PUBLISH_PROFILE }}
+          configuration-file: docker-compose.yml 
