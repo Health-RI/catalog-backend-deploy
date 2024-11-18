@@ -3,5 +3,5 @@ services:
   solr:
     image: ghcr.io/genomicdatainfrastructure/gdi-userportal-solr:{VERSION_SOLR}
     volumes:
-      - ${WEBAPP_STORAGE_HOME}/solr_data_{VERSION_SOLR_WITH_UNDERSCORES}:/var/solr  
+      - ${WEBAPP_STORAGE_HOME}/solr_data_{VERSION_SOLR_WITH_LOWER_DASHES}:/var/solr  
     restart: always
