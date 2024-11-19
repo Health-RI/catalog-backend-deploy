@@ -1,76 +1,87 @@
-<!--
-SPDX-FileCopyrightText: 2024 PNED G.I.E.
+# Deployment Workflow Repository
 
-SPDX-License-Identifier: CC-BY-4.0
--->
+This repository contains the GitHub Actions workflow used to streamline the release and deployment processes for the following services:
 
-[![REUSE status](https://api.reuse.software/badge/github.com/GenomicDataInfrastructure/oss-project-template)](https://api.reuse.software/info/github.com/GenomicDataInfrastructure/oss-project-template)
-![example workflow](https://github.com/GenomicDataInfrastructure/oss-project-template/actions/workflows/main.yml/badge.svg)
-![example workflow](https://github.com/GenomicDataInfrastructure/oss-project-template/actions/workflows/test.yml/badge.svg)
-![example workflow](https://github.com/GenomicDataInfrastructure/oss-project-template/actions/workflows/release.yml/badge.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=GenomicDataInfrastructure_oss-project-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=GenomicDataInfrastructure_oss-project-template)
-[![GitHub contributors](https://img.shields.io/github/contributors/GenomicDataInfrastructure/oss-project-template)](https://github.com/GenomicDataInfrastructure/oss-project-template/graphs/contributors)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+- **CKAN**
+- **Discovery Service**
+- **Solr**
 
-# oss-project-template
+The workflow automates deployments to both `acceptance` (ACC) and `production` (PROD) environments using Azure Web Apps.
 
-This is a OSS project template. It suggests an initial setup for a successful open-source project.
+---
 
-## Software Development Guidelines
+## Workflow Overview
 
-- We encourage the use of docker image to ship the code - GitHub offers free storage for open source projects.
-- Testing is fundamental for stable and secure code.
-- Follow free and Open Source Software principles:
-    - Keep `CHANGELOG.md`, `README.md`, and `CONTRIBUTING.md` up to date.
-    - Add license and copyrights to headers for each file - we suggest following [REUSE](https://reuse.software/).
-    - Keep an issue tracker open for everyone.
-    - Review regularly dependencies licenses and comply with all license requirements.
-    - For more suggestions, please check [OpenSSF Best Practices](https://www.bestpractices.dev/en).
-- Automated and recurrent CI/CD - GitHub offers a few thousand minutes per month.
-- Quality checks are mandatory - SonarCloud is free for open-source projects.
-- Vulnerability checks are mandatory - SonarCloud for code, ORT for dependencies, Trivy for packages and libraries inside docker images.
+The workflow is triggered manually via the GitHub Actions interface. Users can specify the versions of CKAN, Discovery Service, and Solr at the time of triggering the workflow.
 
-## CI/CD
+### Services Deployed
 
-There is one workflow available release.yml`. 
+1. **CKAN**: A data management solution.
+2. **Discovery Service**: Enables dataset discovery.
+3. **Solr**: A search platform for indexing and querying datasets.
 
-In `test.yml` should go all kinds of tests, like: unit/integration tests, linters, prettiers, sonar, etc. This workflow should be fast and happen on every push.
+### Deployment Environments
 
-In `main.yml` should go all kinds of checks that are still needed to enforce code quality, or license and security compliance checks. This workflow can be heavy, so it is advisable to happen only when the PR is open or when changes are merged to main. 
+- **Acceptance (ACC)**: Used for testing and validation.
+- **Production (PROD)**: The live environment.
 
-Similarly to the previous workflow, `release.yml` also should enforce code quality, license compliance, or security checks, that can be potentially heavy.
+The `PROD` deployment depends on the successful completion of the `ACC` deployment. Which happes automatically after a weak
 
-In this template, you will find jobs for [ORT](https://oss-review-toolkit.org/ort/), [REUSE](https://reuse.software/), [Trivy](https://trivy.dev/), and [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry).
+---
 
-## Installation
+## How It Works
 
-![template](./select_repo_template.png)
+1. **Trigger the Workflow**:
+   - Navigate to the **Actions** tab in the GitHub repository.
+   - Select the **Publish Release** workflow.
+   - Click **Run Workflow**.
+   - Input the following versions:
+     - `version_ckan`: The version of CKAN to deploy (e.g., `1.0.0`).
+     - `version_discovery`: The version of the Discovery Service to deploy (e.g., `1.0.0`).
+     - `version_solr`: The version of Solr to deploy (e.g., `1.0.0`).
+     - `version_solr_with_lower_dashes`: The Solr version in a lower-dashed format (e.g., `1_0_0`).
 
-## Usage
+2. **Environment Variable Injection**:
+   - The workflow uses the specified input versions as environment variables.
 
-You will need to review the existing files, after you innitialised you project with this template.
+3. **Deploy to Acceptance**:
+   - The workflow first deploys the specified versions of CKAN, Discovery Service, and Solr to the ACC environment.
 
-- Search for TODO and replace dummy content by the correct value (e.g. links and repository names).
-- Replace all references of `GenomicDataInfrastructure/oss-project-template` by your project repository.
-- Keep `CHANGELOG.md` up to date, to reflect your deliveries.
-- Update `CONTRIBUTING.md` to your project's needs, there are sessions to be fulfilled or simply removed.
-- Update `README.md` to reflect your projects needs.
-- Replace and add missing licenses accordingly.
-- Review projects `README.md` badges.
-- Register your open project in, if you want to get a `REUSE compliant` badge.
+4. **Deploy to Production**:
+   - After the ACC deployment completes successfully, the workflow deploys the same versions to the PROD environment.
 
-## Licenses
+5. **Monitor Progress**:
+   - Follow the workflow's logs in the GitHub Actions interface for status updates and any potential issues.
 
-This work is licensed under multiple licences:
-- All original source code is licensed under [Apache-2.0](./LICENSES/Apache-2.0.txt).
-- All documentation and images are licensed under [CC-BY-4.0](./LICENSES/CC-BY-4.0.txt).
-- For more accurate information, check the individual files.
+6. **Verify**:
+   - Validate the deployment in the ACC environment.
+   - Confirm successful deployment to PROD after one weak.
 
-## References
-- https://fossid.com/blog/19-guidelines-for-free-and-open-source-software-usage/
-- https://reuse.software/
-- https://oss-review-toolkit.org/ort/
-- https://www.sonarsource.com/products/sonarcloud/
-- https://www.bestpractices.dev/en
-- https://trivy.dev/
-- https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-docker-registry
+
+---
+
+## Environment Variables
+
+The workflow uses both predefined and user-provided environment variables:
+
+| Variable                     | Description                             |
+|------------------------------|-----------------------------------------|
+| `CKAN_NAME`                  | Container image name for CKAN          |
+| `DISCOVERY_IMAGE`            | Container image name for Discovery      |
+| `SOLR_IMAGE`                 | Container image name for Solr           |
+| `version_ckan`               | User-specified version for CKAN         |
+| `version_discovery`          | User-specified version for Discovery    |
+| `version_solr`               | User-specified version for Solr         |
+| `version_solr_with_lower_dashes` | User-specified Solr version in lower-dashed format |
+
+---
+
+## Prerequisites
+
+### Secrets
+
+The workflow uses the following GitHub secrets:
+
+- `AZURE_CREDENTIALS`: Azure authentication credentials for deploying the services.
+
+
