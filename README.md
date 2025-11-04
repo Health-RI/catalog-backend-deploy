@@ -6,7 +6,7 @@ This repository contains the GitHub Actions workflow used to streamline the rele
 - **Discovery Service**
 - **Solr**
 
-The workflow automates deployments to both `acceptance` (ACC) and `production` (PROD) environments using Azure Web Apps.
+The workflow automates deployments to both `acceptance` (ACC) and `production` (PROD) environments using Azure Web Apps. Deployments now use Azure Site Containers, so each web app is updated by running `az webapp sitecontainers update` during the workflow.
 
 ---
 
@@ -43,6 +43,12 @@ The `PROD` deployment depends on the successful completion of the `ACC` deployme
 
 2. **Environment Variable Injection**:
    - The workflow uses the specified input versions as environment variables.
+
+### Azure Site Containers
+
+- After authenticating with Azure, each job lists the configured site containers (`az webapp sitecontainers list`) and picks the one flagged as `isMain`, so the workflow does not need hard-coded container names.
+- Image swaps are executed with `az webapp sitecontainers update --image IMAGE:TAG`, preserving every other container setting (ports, commands, volumes, etc.).
+- Resource groups are tracked per environment (e.g., `healthri-uac` for ACC, `healthri` for PROD) via dedicated environment variables to ensure the CLI targets the correct App Service instance.
 
 3. **Deploy to Acceptance**:
    - The workflow first deploys the specified versions of CKAN, Discovery Service, and Solr to the ACC environment.
@@ -113,3 +119,5 @@ The workflow uses the following GitHub secrets:
 >    ```
 >    ckan -c ckan.ini search-index rebuild
 >    ```
+
+The `docker-compose.yml` file in this repository now serves only the manual reindex procedure described above. Release deployments update Solr directly via Azure Site Containers, so the workflow no longer edits the compose file.
