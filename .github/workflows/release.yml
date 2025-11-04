@@ -28,11 +28,14 @@ env:
 jobs:
   deploy-to-acc:
     runs-on: ubuntu-latest
-    environment: acc
+    environment: acc 
     env:  
       AZURE_CKAN_APP_NAME: healthri-ckan-uac
+      AZURE_CKAN_RESOURCE_GROUP: healthri-uac
       AZURE_DISCOVERY_APP_NAME: dataset-discovery-service-acc
+      AZURE_DISCOVERY_RESOURCE_GROUP: healthri-uac
       AZURE_SOLR_APP_NAME: healthri-ckan-solr-uac
+      AZURE_SOLR_RESOURCE_GROUP: healthri-uac
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -95,8 +98,11 @@ jobs:
     environment: prod
     env:  
       AZURE_CKAN_APP_NAME: healthri-ckan
+      AZURE_CKAN_RESOURCE_GROUP: healthri
       AZURE_DISCOVERY_APP_NAME: dataset-discovery-service
+      AZURE_DISCOVERY_RESOURCE_GROUP: healthri
       AZURE_SOLR_APP_NAME: healthri-ckan-solr
+      AZURE_SOLR_RESOURCE_GROUP: healthri
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
