@@ -47,37 +47,19 @@ jobs:
 
       - name: Update image version CKAN
         run: |
-          set -euo pipefail
-          container_name="$(az webapp sitecontainers list \
-            --name "${AZURE_CKAN_APP_NAME}" \
-            --resource-group "${AZURE_CKAN_RESOURCE_GROUP}" \
-            --query "[?properties.isMain].name" -o tsv)"
-          if [ -z "${container_name}" ]; then
-            echo "Unable to find main sitecontainer for ${AZURE_CKAN_APP_NAME}" >&2
-            exit 1
-          fi
           az webapp sitecontainers update \
             --name "${AZURE_CKAN_APP_NAME}" \
             --resource-group "${AZURE_CKAN_RESOURCE_GROUP}" \
-            --container-name "${container_name}" \
+            --container-name main \
             --is-main true \
             --image "${CKAN_NAME}:${{ inputs.version_ckan }}"
 
       - name: Update image version Discovery
         run: |
-          set -euo pipefail
-          container_name="$(az webapp sitecontainers list \
-            --name "${AZURE_DISCOVERY_APP_NAME}" \
-            --resource-group "${AZURE_DISCOVERY_RESOURCE_GROUP}" \
-            --query "[?properties.isMain].name" -o tsv)"
-          if [ -z "${container_name}" ]; then
-            echo "Unable to find main sitecontainer for ${AZURE_DISCOVERY_APP_NAME}" >&2
-            exit 1
-          fi
           az webapp sitecontainers update \
             --name "${AZURE_DISCOVERY_APP_NAME}" \
             --resource-group "${AZURE_DISCOVERY_RESOURCE_GROUP}" \
-            --container-name "${container_name}" \
+            --container-name main \
             --is-main true \
             --image "${DISCOVERY_IMAGE}:${{ inputs.version_discovery }}"
 
@@ -114,37 +96,19 @@ jobs:
 
       - name: Update image version CKAN
         run: |
-          set -euo pipefail
-          container_name="$(az webapp sitecontainers list \
-            --name "${AZURE_CKAN_APP_NAME}" \
-            --resource-group "${AZURE_CKAN_RESOURCE_GROUP}" \
-            --query "[?properties.isMain].name" -o tsv)"
-          if [ -z "${container_name}" ]; then
-            echo "Unable to find main sitecontainer for ${AZURE_CKAN_APP_NAME}" >&2
-            exit 1
-          fi
           az webapp sitecontainers update \
             --name "${AZURE_CKAN_APP_NAME}" \
             --resource-group "${AZURE_CKAN_RESOURCE_GROUP}" \
-            --container-name "${container_name}" \
+            --container-name main \
             --is-main true \
             --image "${CKAN_NAME}:${{ inputs.version_ckan }}"
 
       - name: Update image version Discovery
         run: |
-          set -euo pipefail
-          container_name="$(az webapp sitecontainers list \
-            --name "${AZURE_DISCOVERY_APP_NAME}" \
-            --resource-group "${AZURE_DISCOVERY_RESOURCE_GROUP}" \
-            --query "[?properties.isMain].name" -o tsv)"
-          if [ -z "${container_name}" ]; then
-            echo "Unable to find main sitecontainer for ${AZURE_DISCOVERY_APP_NAME}" >&2
-            exit 1
-          fi
           az webapp sitecontainers update \
             --name "${AZURE_DISCOVERY_APP_NAME}" \
             --resource-group "${AZURE_DISCOVERY_RESOURCE_GROUP}" \
-            --container-name "${container_name}" \
+            --container-name main \
             --is-main true \
             --image "${DISCOVERY_IMAGE}:${{ inputs.version_discovery }}"
 
